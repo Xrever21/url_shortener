@@ -1,26 +1,30 @@
-version: '3.8'
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "3002:3002"
-    volumes:
-      - ./backend:/app
-    restart: always
-
   frontend:
     build: ./frontend
+    container_name: url_shortener-frontend
     ports:
       - "8083:80"
-    restart: always
+    networks:
+      - default
+
+  backend:
+    build: ./backend
+    container_name: url_shortener-backend
+    ports:
+      - "3002:3002"
+    networks:
+      - default
 
   nginx:
     image: nginx:latest
+    container_name: url_shortener-nginx
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx:/etc/nginx/conf.d
     ports:
-      - "80:80"
-    depends_on:
-      - backend
-      - frontend
-    restart: always
+      - "8080:80"
+    networks:
+      - default
+
+networks:
+  default:
+

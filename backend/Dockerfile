@@ -1,20 +1,14 @@
-# Используем образ Node.js
-FROM node:16
+FROM node:16-bullseye
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы package.json и package-lock.json
 COPY package*.json ./
-
-# Устанавливаем зависимости
 RUN npm install
+RUN npm rebuild better-sqlite3
 
-# Копируем остальные файлы
 COPY . .
 
-# Открываем порт
 EXPOSE 3002
 
-# Запускаем сервер
 CMD ["node", "server.js"]
+
