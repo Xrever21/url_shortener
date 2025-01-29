@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сокращение ссылок</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        input { padding: 10px; width: 300px; margin-bottom: 10px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        .output { margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Сервис сокращения ссылок</h1>
+    <input type="text" id="longUrl" placeholder="Введите ссылку">
+    <button onclick="shortenUrl()">Сократить</button>
+    <div class="output" id="output"></div>
+
+    <script>
+        async function shortenUrl() {
+            const longUrl = document.getElementById('longUrl').value;
+            const uuid = localStorage.getItem('user_uuid') || generateUUID();
+            localStorage.setItem('user_uuid', uuid);
+
+            const response = await fetch('http://kowmarket.ru/api/shorten', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ longUrl, uuid })
+            });
+
+            const result = await response.json();
+            document.getElementById('output').innerHTML = response.ok ? 
+                `Короткая ссылка: <a href="${result.shortUrl}" target="_blank">${result.shortUrl}</a>` : 
+                `Ошибка: ${result.error}`;
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3) | 0x8;
+                return v.toString(16);
+            });
+        }
+    </script>
+</body>
+</html>
